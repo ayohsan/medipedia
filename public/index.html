@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,12 +8,17 @@
 </head>
 <body>
     <div class="container">
-        <h1>Medipedia</h1>
-        <form id="searchForm">
-            <input type="text" id="keyword" placeholder="Entrez une maladie, une plante, une épice, un fruit ou un légume">
-            <button type="submit">Rechercher</button>
-        </form>
-        <div id="response"></div>
+        <div id="searchContainer" class="search-container">
+            <h1>Medipedia</h1>
+            <form id="searchForm">
+                <input type="text" id="keyword" placeholder="Entrez une maladie, une plante, une épice, un fruit ou un légume">
+                <button type="submit">Rechercher</button>
+            </form>
+        </div>
+        <div id="resultContainer" class="result-container">
+            <button id="backButton" class="back-button">Retour</button>
+            <div id="response"></div>
+        </div>
     </div>
     <script src="/assets/js/script.js"></script>
 </body>
