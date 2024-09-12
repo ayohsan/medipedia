@@ -5,7 +5,7 @@ import * as path from 'path';
 
 @Injectable()
 export class PdfService {
-  private readonly filePath = path.join(__dirname, '..', '..', 'public', 'pdfs', 'canon_avicenna.pdf');
+  private readonly filePath = path.join(__dirname, '..', '..', 'pdfs','canon_avicenna.pdf');
 
   private async extractTextFromPDF(filePath: string): Promise<string[]> {
     try {

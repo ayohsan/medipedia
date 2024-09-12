@@ -156,3 +156,14 @@ button[type="submit"]:hover {
     color: #b89c8d; /* Couleur en harmonie avec le bouton */
     margin-bottom: 20px;
 }
+
+
+/* Animation lors du chargement de la page */   
+@keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+body {
+    animation: fade-in 0.5s ease-in-out;
+}
