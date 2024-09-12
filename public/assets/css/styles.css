@@ -19,6 +19,7 @@ body {
     max-width: 1200px;
     height: 80%;
     position: relative;
+    flex-direction: row;
 }
 
 /* Conteneur de recherche */
@@ -158,4 +159,61 @@ button[type="submit"]:hover {
     font-size: 28px;
     color: #b89c8d; /* Harmonisé avec le bouton */
     margin-bottom: 20px;
+}
+
+/* Media Queries pour les écrans plus petits */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto; /* Ajuste la hauteur pour les petits écrans */
+    }
+
+    .search-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .result-container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    /* Ajustement des tailles des éléments */
+    input, textarea, button[type="submit"], #keyword {
+        width: 100%;
+        max-width: none; /* Enlève la largeur maximale */
+    }
+
+    /* Taille de l'en-tête pour les petits écrans */
+    .search-container h1 {
+        font-size: 24px;
+    }
+
+    /* Ajustement des boutons */
+    .back-button, button[type="submit"] {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Ajustements pour les très petits écrans comme les smartphones en portrait */
+    .search-container {
+        padding: 10px;
+    }
+
+    /* Réduire le padding des champs et boutons */
+    input, textarea, button[type="submit"], #keyword {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .search-container h1 {
+        font-size: 20px;
+    }
+
+    .back-button, button[type="submit"] {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
 }
