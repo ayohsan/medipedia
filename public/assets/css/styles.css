@@ -7,46 +7,47 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
-    overflow: hidden; /* Prevent scrollbars during animation */
+    overflow: hidden; /* Empêcher les barres de défilement */
+    animation: fade-in 0.5s ease-in-out; /* Animation lors du chargement de la page */
 }
 
-/* Style du conteneur principal */
+/* Conteneur principal centré */
 .container {
     display: flex;
     width: 100%;
-    margin: -1 auto;
+    margin: auto;
     max-width: 1200px;
     height: 80%;
     position: relative;
 }
 
-/* Style du conteneur de recherche */
+/* Conteneur de recherche */
 .search-container {
     flex: 1;
     display: flex;
-    flex-direction: column; /* Aligner les éléments verticalement */
-    justify-content: center; /* Centrer verticalement */
-    align-items: center; /* Centrer horizontalement */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    background: #fdf9f6; /* Couleur de fond plus douce */
+    background: #fdf9f6; /* Couleur douce */
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.1); /* Ombre plus marquée */
-    padding: 15px 35px; /* Augmentation du padding pour plus d'espace */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    padding: 15px 35px; /* Plus de padding pour l'espace */
     transition: transform 0.5s ease-in-out;
-    position: relative;
-    border: 1px solid #ddd; /* Bordure plus subtile */
+    border: 1px solid #ddd; /* Bordure subtile */
 }
 
+/* Champ de texte et textarea */
 input, textarea {
-    width: 80%; /* Ajuster la largeur en fonction de tes besoins */
-    margin: 0 auto; /* Centrer horizontalement */
+    width: 80%; /* Largeur ajustable */
+    margin: 0 auto;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
 }
 
-/* Style du conteneur des résultats */
+/* Conteneur des résultats masqué par défaut */
 .result-container {
     flex: 2;
     padding: 25px;
@@ -56,33 +57,34 @@ input, textarea {
     transform: translateX(100%);
     transition: transform 0.5s ease-in-out;
     opacity: 0; /* Cacher par défaut */
-    overflow-y: auto; /* Autoriser le défilement si le texte est trop long */
-    max-height: 80vh; /* Limiter la hauteur pour qu'il s'adapte à l'écran */
+    overflow-y: auto; /* Permettre le défilement si nécessaire */
+    max-height: 80vh; /* Hauteur maximale pour rester dans la fenêtre */
 }
 
-/* Effet de déplacement pour le conteneur de recherche */
+/* Déplacement du conteneur de recherche */
 .search-container.moved {
     transform: translateX(-80%);
 }
 
-/* Affichage des résultats */
+/* Afficher le conteneur de résultats */
 .result-container.show {
     transform: translateX(0);
-    opacity: 1; /* Afficher le conteneur des résultats */
+    opacity: 1;
 }
 
-/* Style des réponses */
+/* Réponse masquée par défaut */
 #response {
     font-size: 16px;
     color: #333;
+    opacity: 0;
+    max-height: 80vh;
+    overflow-y: auto; /* Défilement si nécessaire */
     transition: opacity 0.5s ease-in-out;
-    opacity: 0; /* Cacher par défaut */
-    max-height: 80vh; /* Limiter la hauteur à celle de la fenêtre */
-    overflow-y: auto; /* Scroll si le contenu est trop long */
 }
 
+/* Afficher la réponse */
 #response.show {
-    opacity: 1; /* Afficher lorsque la classe "show" est ajoutée */
+    opacity: 1;
 }
 
 /* Style des paragraphes dans la réponse */
@@ -92,30 +94,30 @@ input, textarea {
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
-    word-wrap: break-word; /* Casser les mots longs pour éviter les débordements */
-    font-size: 10px; /* Taille de police ajustée pour mieux lire le texte */
+    word-wrap: break-word; /* Casser les mots longs */
+    font-size: 14px; /* Taille ajustée pour lecture */
 }
 
-/* Style du bouton de retour */
+/* Bouton de retour */
 .back-button {
     display: block;
     margin: 20px auto;
     padding: 12px 24px;
     font-size: 16px;
-    color: #ffffff; /* Couleur du texte blanche */
-    background-color: #b89c8d; /* Couleur nude douce */
+    color: #fff;
+    background-color: #b89c8d; /* Couleur douce */
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.3s, transform 0.3s; /* Animation de transition */
 }
 
 .back-button:hover {
-    background-color: #a38577; /* Couleur légèrement plus foncée au survol */
-    transform: scale(1.05); /* Effet de zoom léger au survol */
+    background-color: #a38577;
+    transform: scale(1.05); /* Zoom léger au survol */
 }
 
-/* Style du champ de texte */
+/* Champ de texte (input) */
 #keyword {
     width: 100%;
     max-width: 600px;
@@ -128,17 +130,18 @@ input, textarea {
     transition: border-color 0.3s;
 }
 
+/* Couleur du champ de texte au focus */
 #keyword:focus {
-    border-color: #b89c8d; /* Bordure couleur nude au focus */
+    border-color: #b89c8d;
     outline: none;
 }
 
-/* Style du bouton de recherche */
+/* Bouton de recherche */
 button[type="submit"] {
     padding: 12px 24px;
     font-size: 16px;
     color: white;
-    background-color: #b89c8d; /* Même couleur que le bouton retour */
+    background-color: #b89c8d; /* Couleur douce */
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -146,24 +149,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #a38577; /* Légèrement plus foncé au survol */
-    transform: scale(1.05); /* Légère augmentation de taille au survol */
+    background-color: #a38577;
+    transform: scale(1.05);
 }
 
 /* Style de l'en-tête */
 .search-container h1 {
     font-size: 28px;
-    color: #b89c8d; /* Couleur en harmonie avec le bouton */
+    color: #b89c8d; /* Harmonisé avec le bouton */
     margin-bottom: 20px;
-}
-
-
-/* Animation lors du chargement de la page */   
-@keyframes fade-in {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-body {
-    animation: fade-in 0.5s ease-in-out;
 }
