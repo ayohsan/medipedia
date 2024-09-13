@@ -1,97 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as pdfParser from 'pdf-parse';
-import { PDFDocument } from 'pdf-lib';
+import { execSync } from 'child_process'; // Utilisation de child_process pour exécuter le script Python
 
-/**
- * Service responsable de la logique métier, ici la recherche de mots-clés dans un fichier PDF.
- * Il effectue la lecture et le parsing du fichier PDF et retourne les résultats de la recherche.
- */
 @Injectable()
 export class PdfService {
-  private readonly pdfFilePath = './pdfs/canon_avicenna.pdf'; // Spécifie le chemin du fichier PDF à lire
+  private readonly pdfFilePath = './pdfs/canon_avicenna.pdf'; // chemin vers ton fichier PDF
 
-  /**
-   * Recherche un mot-clé dans le PDF et retourne le résultat.
-   * @param keyword : le mot-clé à rechercher
-   * @returns : résultat de la recherche
-   */
   async searchKeyword(keyword: string): Promise<any> {
     try {
-      // Lire le fichier PDF à partir du chemin
-      const pdfBuffer = fs.readFileSync(this.pdfFilePath);
+      // Lire et parser le PDF
+      const pdfBuffer = fs.readFileSync(this.pdfFilePath); // Lire le fichier PDF en tant que buffer
+      const data = await pdfParser(pdfBuffer); // Parser le fichier PDF
 
-      // Parse le fichier PDF pour obtenir le texte
-      const data = await pdfParser(pdfBuffer);
+      let excerpts = []; // Tableau pour stocker les extraits trouvés
 
-      // Charger le document PDF avec pdf-lib pour obtenir le nombre de pages
-      const pdfDoc = await PDFDocument.load(pdfBuffer);
-      const numberOfPages = pdfDoc.getPageCount();
+      // Parcourir chaque page du PDF pour chercher le mot-clé
+      const numPages = data.numpages; // Obtenir le nombre de pages
+      for (let i = 0; i < numPages; i++) {
+        const pageText = data.text; // Extraire le texte de toutes les pages
 
-      let pageNumber = -1;
-      let excerpt = '';
-
-      for (let i = 0; i < numberOfPages; i++) {
-        const page = pdfDoc.getPage(i);
-        const { width, height } = page.getSize();
-
-        // Extraire le texte de chaque page
-        const pageText = await this.extractTextFromPage(page);
-
+        // Si le texte de la page contient le mot-clé
         if (pageText.toLowerCase().includes(keyword.toLowerCase())) {
-          pageNumber = i; // Page number starting from 0
-          excerpt = this.extractExcerpt(pageText, keyword, 3000);
-          break;
+          const excerpt = this.extractExcerpt(pageText, keyword, 3000); // Extraire un contexte autour du mot-clé
+          excerpts.push({ pageNumber: i, excerpt }); // Ajouter l'extrait trouvé au tableau
         }
       }
 
-      if (pageNumber !== -1) {
-        return { found: true, pageNumber, excerpt };
+      // Si des extraits sont trouvés, on appelle le script Python pour générer un résumé
+      if (excerpts.length > 0) {
+        const summary = await this.generateSummary(excerpts.map(ex => ex.excerpt).join('\n\n')); // Générer un résumé avec le script Python
+        return { found: true, summary, excerpts }; // Retourner le résumé et les extraits
       } else {
-        return { found: false }; // Mot-clé non trouvé
+        return { found: false }; // Retourner false si aucun mot-clé trouvé
       }
     } catch (error) {
-      // Gère les erreurs (par ex. fichier introuvable, erreurs de parsing)
-      console.error('Erreur lors de la lecture du fichier PDF:', error);
-      return { error: 'Erreur lors de la lecture du fichier PDF.' };
+      console.error('Erreur lors de la lecture du fichier PDF:', error); // Loguer les erreurs
+      return { error: 'Erreur lors de la lecture du fichier PDF.' }; // Retourner une erreur en cas d'échec
     }
   }
 
-  /**
-   * Fonction pour extraire un extrait autour du mot-clé dans le texte.
-   * @param text : texte du PDF
-   * @param keyword : mot-clé recherché
-   * @param contextLength : longueur du contexte autour du mot-clé
-   * @returns : extrait du texte autour du mot-clé
-   */
+  // Méthode pour générer un résumé en utilisant le script Python
+  private async generateSummary(pdfText: string): Promise<string> {
+    try {
+      const summary = execSync(`python python_scripts/nlp_service.py "${pdfText.replace(/"/g, '\\"')}"`).toString(); // Appeler le script Python
+      return summary.trim(); // Retourner le texte généré par le script Python
+    } catch (error) {
+      console.error('Erreur lors de l\'exécution du script Python:', error); // Loguer les erreurs
+      return 'Erreur lors de l\'exécution du script Python.';
+    }
+  }
+
+  // Méthode pour extraire un extrait autour du mot-clé dans le texte
   private extractExcerpt(text: string, keyword: string, contextLength: number = 3000): string {
-    // Trouver l'index du mot-clé dans le texte
-    const keywordIndex = text.toLowerCase().indexOf(keyword.toLowerCase());
-
-    if (keywordIndex === -1) {
-      return `Le mot '${keyword}' n'a pas été trouvé dans le texte.`;
-    }
-
-    // Calculer les indices de début et de fin pour l'extraction
-    const start = Math.max(0, keywordIndex - contextLength);
-    const end = Math.min(text.length, keywordIndex + keyword.length + contextLength);
-
-    // Extraire le contexte
-    const excerpt = text.slice(start, end);
-
-    // Mettre le mot-clé en gras
-    const keywordRegex = new RegExp(`(${keyword})`, 'gi');
-    return excerpt.replace(keywordRegex, '**$1**');
-  }
-
-  /**
-   * Fonction pour extraire le texte d'une page PDF (avec pdf-lib).
-   * @param page : la page du PDF à traiter
-   * @returns : texte extrait de la page
-   */
-  private async extractTextFromPage(page: any): Promise<string> {
-    const { width, height } = page.getSize();
-    const text = await page.getTextContent();
-    return text.items.map((item: any) => item.str).join(' ');
+    const keywordIndex = text.toLowerCase().indexOf(keyword.toLowerCase()); // Trouver l'index du mot-clé
+    const start = Math.max(0, keywordIndex - contextLength); // Calculer le début du contexte
+    const end = Math.min(text.length, keywordIndex + keyword.length + contextLength); // Calculer la fin du contexte
+    const excerpt = text.slice(start, end); // Extraire la portion de texte
+    const keywordRegex = new RegExp(`(${keyword})`, 'gi'); // Mettre en gras le mot-clé dans l'extrait
+    return excerpt.replace(keywordRegex, '**$1**'); // Remplacer le mot-clé par sa version avec mise en gras
   }
 }

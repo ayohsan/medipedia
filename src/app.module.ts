@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { PdfModule } from './pdf/pdf.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
