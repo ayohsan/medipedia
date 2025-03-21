@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medipedia - Recherche PDF</title>
+    <link rel="stylesheet" href="/public/assets/css/styles.css">
+</head>
+<style>
+    body {
+        background-image: url('/public/assets/images/herbal-medicine-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.85); /* Fond semi-transparent */
+        z-index: -1;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div id="searchContainer" class="search-container">
+            <h1>Medipedia</h1>
+            <form id="searchForm">
+                <input type="text" id="keyword" placeholder="Entrez une maladie, une plante, une épice, un fruit ou un légume">
+                <button type="submit">Rechercher</button>
+            </form>
+        </div>
+        <div id="resultContainer" class="result-container">
+            <button id="backButton" class="back-button">Retour</button>
+            <div id="response"></div>
+        </div>
+    </div>
+    <script src="/public/assets/js/script.js"></script>
+</body>
+</html>
