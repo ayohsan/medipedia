@@ -69,16 +69,6 @@ Avant de pouvoir exécuter l'application localement, vous devez avoir les outils
 
 Si l'IA nécessite l'exécution de scripts Python, vous pouvez les trouver dans le dossier **`python_scripts/`**. Vous pouvez exécuter les scripts manuellement ou les intégrer à l'application via des appels API selon la configuration du projet.
 
-### Tester les fonctionnalités
-
-Vous pouvez tester le fonctionnement de l'application avec les tests intégrés. Les tests sont situés dans le dossier **`test/`** et peuvent être exécutés avec la commande suivante :
-
-```bash
-npm test
-```
-
-Cela lancera les tests automatisés pour vérifier que toutes les fonctionnalités de l'application fonctionnent correctement.
-
 ### Framework utilisé
 
 Ce projet utilise **NestJS** pour la gestion du backend, et **TypeScript** pour le développement du code source. Le front-end est construit avec des technologies modernes telles que **HTML**, **CSS** et **JavaScript**, avec une attention particulière portée à l'optimisation de la performance pour le déploiement sur GitHub Pages.
